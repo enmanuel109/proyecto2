@@ -14,8 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 public class Sistem extends ValidacionUsuarios {
 
@@ -24,9 +24,10 @@ public class Sistem extends ValidacionUsuarios {
     private JPanel panelFormulario;
     private JPopupMenu menu;
     private JButton btnMenu;
+    private FileUser NewUser = new FileUser();
+    public static File mifile = null;
 
     public Sistem() {
-        // Crear JFrame
         frame = new JFrame("Pantalla Completa con Imagen");
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,12 +71,7 @@ public class Sistem extends ValidacionUsuarios {
         menu = new JPopupMenu();
         btnMenu.addActionListener(e -> menu.show(btnMenu, 0, -menu.getPreferredSize().height));
 
-        if (Usuario.getUsuarios().size() == 1) {
-            mostrarLoginAdmin(fondoLabel);
-        } else {
-            mostrarFormularioRegistrarse(fondoLabel);
-        }
-
+        mostrarFormularioRegistrarse(fondoLabel);
         frame.setVisible(true);
     }
 
@@ -119,69 +115,6 @@ public class Sistem extends ValidacionUsuarios {
         menu.add(cerrar);
     }
 
-    // Formularios
-    private void mostrarLoginAdmin(JLabel fondoLabel) {
-        limpiarFormulario(fondoLabel);
-        actualizarMenuSegunFormulario("LoginAdmin");
-
-        panelFormulario = new JPanel();
-        panelFormulario.setLayout(null);
-        panelFormulario.setBounds(645, 400, 370, 170);
-        panelFormulario.setOpaque(false);
-
-        JLabel lblNombre = new JLabel(Usuario.administrador.getNombre());
-        lblNombre.setBounds(0, 0, 300, 40);
-        lblNombre.setFont(new Font("Arial", Font.BOLD, 20));
-        lblNombre.setForeground(Color.WHITE);
-        panelFormulario.add(lblNombre);
-
-        JPasswordField campo = new JPasswordField();
-        campo.setBounds(0, 50, 280, 40);
-        campo.setFont(new Font("Arial", Font.BOLD, 20));
-        campo.setEchoChar('*');
-        panelFormulario.add(campo);
-
-        ImageIcon ojoIcon = new ImageIcon("src/IMGS/OJO.png");
-        Image imgOjo = ojoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-        ojoIcon = new ImageIcon(imgOjo);
-
-        JButton btnOjo = new JButton(ojoIcon);
-        btnOjo.setBounds(290, 50, 40, 40);
-        btnOjo.setFocusPainted(false);
-        btnOjo.setContentAreaFilled(false);
-        btnOjo.setBorderPainted(false);
-        btnOjo.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                campo.setEchoChar((char) 0);
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                campo.setEchoChar('*');
-            }
-        });
-        panelFormulario.add(btnOjo);
-
-        JButton btnLogin = new JButton("Ingresar");
-        btnLogin.setBounds(0, 100, 280, 40);
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 18));
-        panelFormulario.add(btnLogin);
-
-        btnLogin.addActionListener(e -> {
-            String passIngresada = new String(campo.getPassword());
-            if (passIngresada.equals(Usuario.administrador.getContraseña())) {
-                frame.dispose();
-                new Escritorio();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Contraseña incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        fondoLabel.add(panelFormulario);
-        fondoLabel.revalidate();
-        fondoLabel.repaint();
-    }
-
     private void mostrarFormularioRegistrarse(JLabel fondoLabel) {
         limpiarFormulario(fondoLabel);
         actualizarMenuSegunFormulario("Registrarse");
@@ -195,10 +128,15 @@ public class Sistem extends ValidacionUsuarios {
         lblUsuario.setBounds(0, 0, 150, 25);
         lblUsuario.setForeground(Color.WHITE);
         panelFormulario.add(lblUsuario);
-
+        
         JTextField txtUsuario = new JTextField();
         txtUsuario.setBounds(0, 25, 280, 30);
         panelFormulario.add(txtUsuario);
+        if (Usuario.getUsuarios().size() == 1) {
+            txtUsuario.setText("Administrador");
+            txtUsuario.setFocusable(false);
+        } 
+
 
         JLabel lblContrasena = new JLabel("Escriba su Contraseña:");
         lblContrasena.setBounds(0, 60, 150, 25);
@@ -223,6 +161,7 @@ public class Sistem extends ValidacionUsuarios {
             public void mousePressed(MouseEvent e) {
                 txtContrasena.setEchoChar((char) 0);
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 txtContrasena.setEchoChar('*');
@@ -239,14 +178,18 @@ public class Sistem extends ValidacionUsuarios {
             txtUsuario.setEditable(false);
         }
 
+        usuarioFile.cargarUsuarios();
+
         btnEntrar.addActionListener(e -> {
             String nombre = txtUsuario.getText().trim();
             String contrasena = new String(txtContrasena.getPassword()).trim();
+
             if (nombre.isEmpty() || contrasena.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Campos vacíos");
                 return;
             }
 
+            // Buscar usuario en la lista cargada desde disco
             boolean encontrado = false;
             for (Usuario u : Usuario.getUsuarios()) {
                 if (u.getNombre().equals(nombre) && u.getContraseña().equals(contrasena)) {
@@ -256,6 +199,7 @@ public class Sistem extends ValidacionUsuarios {
             }
 
             if (encontrado) {
+                // Login exitoso
                 frame.dispose();
                 new Escritorio();
             } else {
@@ -309,6 +253,7 @@ public class Sistem extends ValidacionUsuarios {
             public void mousePressed(MouseEvent e) {
                 txtContrasena.setEchoChar((char) 0);
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 txtContrasena.setEchoChar('*');
@@ -323,17 +268,28 @@ public class Sistem extends ValidacionUsuarios {
         btnCrear.addActionListener(e -> {
             String nombre = txtUsuario.getText().trim();
             String contrasena = new String(txtContrasena.getPassword()).trim();
-            if (!ValidarName(nombre)) {
-                JOptionPane.showMessageDialog(frame, "Nombre inválido o ya existe");
-                return;
+
+            // Cargar usuarios existentes
+            usuarioFile.cargarUsuarios();
+
+            for (Usuario u : Usuario.getUsuarios()) {
+                if (u.getNombre().equalsIgnoreCase(nombre)) {
+                    JOptionPane.showMessageDialog(frame, "Ese usuario ya existe");
+                    return;
+                }
             }
+
             if (!validarPassword(contrasena)) {
-                JOptionPane.showMessageDialog(frame, "Contraseña inválida. Debe tener 5 caracteres, un número, una mayúscula y un carácter especial.");
+                JOptionPane.showMessageDialog(frame, "Contraseña inválida");
                 return;
             }
 
+            NewUser.setFile(nombre);
+            NewUser.crearFolder();
+
             Usuario nuevoUsuario = new Usuario(nombre, contrasena);
             Usuario.getUsuarios().add(nuevoUsuario);
+            usuarioFile.guardarUsuarios();
 
             frame.dispose();
             new Escritorio();

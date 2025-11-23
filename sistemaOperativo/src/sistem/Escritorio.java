@@ -33,11 +33,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-
-/**
- *
- * @author Cantarero
- */
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyVetoException;
@@ -49,6 +44,10 @@ import java.util.logging.Logger;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
+/**
+ *
+ * @author Cantarero
+ */
 public class Escritorio extends JFrame {
 
     private JDesktopPane escritorio = new JDesktopPane();
@@ -78,7 +77,6 @@ public class Escritorio extends JFrame {
         panelPestanas.setVisible(false);
         panelPestanas.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
-// Lo añadimos al fondo o al JLayeredPane para que esté encima
         escritorio.add(panelPestanas, JLayeredPane.POPUP_LAYER);
 
         // Barra de tareas
@@ -89,7 +87,6 @@ public class Escritorio extends JFrame {
 
         fondoLabel.add(barraTareas, BorderLayout.SOUTH);
 
-        // Botón de menú
         ImageIcon iconoBoton = new ImageIcon("src/IMGS/WindowsEscritorio.png");
         Image imgBoton = iconoBoton.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         iconoBoton = new ImageIcon(imgBoton);
@@ -100,7 +97,6 @@ public class Escritorio extends JFrame {
         btnMenu.setBounds(600, 7, 30, 30);
         barraTareas.add(btnMenu);
 
-        // Botón carpeta
         ImageIcon iconoCarpeta = new ImageIcon("src/IMGS/LogoCarpeta.png");
         Image imgCarpeta = iconoCarpeta.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         iconoCarpeta = new ImageIcon(imgCarpeta);
@@ -131,7 +127,6 @@ public class Escritorio extends JFrame {
             }
         });
 
-        // Botón imágenes
         ImageIcon iconoImg = new ImageIcon("src/IMGS/Iconoimagenes.png");
         Image imgImagenes = iconoImg.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         iconoImg = new ImageIcon(imgImagenes);
@@ -142,7 +137,6 @@ public class Escritorio extends JFrame {
         btnImg.setBounds(700, 7, 30, 30);
         barraTareas.add(btnImg);
 
-        // Botón música
         ImageIcon iconoMusica = new ImageIcon("src/IMGS/IconoMusica.png");
         Image imgMusica = iconoMusica.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         iconoMusica = new ImageIcon(imgMusica);
@@ -153,7 +147,6 @@ public class Escritorio extends JFrame {
         btnMusica.setBounds(750, 7, 30, 30);
         barraTareas.add(btnMusica);
 
-        // Botón documentos
         ImageIcon iconoDocumentos = new ImageIcon("src/IMGS/Iconodoc.png");
         Image imgDoc = iconoDocumentos.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         iconoDocumentos = new ImageIcon(imgDoc);
@@ -163,6 +156,28 @@ public class Escritorio extends JFrame {
         btnDoc.setBorderPainted(false);
         btnDoc.setBounds(800, 5, 30, 30);
         barraTareas.add(btnDoc);
+
+        ImageIcon iconoCmd = new ImageIcon("src/IMGS/LogoCmd.png");
+        Image imgCmd = iconoCmd.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        iconoCmd = new ImageIcon(imgCmd);
+        JButton btnCmd = new JButton(iconoCmd);
+        btnCmd.setFocusPainted(false);
+        btnCmd.setContentAreaFilled(false);
+        btnCmd.setBorderPainted(false);
+        btnCmd.setBounds(850, 5, 30, 30);
+        barraTareas.add(btnCmd);
+        btnCmd.addActionListener(e -> {
+            cmd ventanaCmd = new cmd();
+            escritorio.add(ventanaCmd);
+            ventanaCmd.setVisible(true);
+
+            try {
+                ventanaCmd.setSelected(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        });
 
         // Menú emergente
         JPopupMenu menu = new JPopupMenu();
@@ -206,18 +221,14 @@ public class Escritorio extends JFrame {
     }
 
     private void abrirCarpeta(JPanel indicadorDentro, JPanel indicadorSub) throws PropertyVetoException {
-
-        // CREAR NUEVA VENTANA
         ventanaCarpeta = new JInternalFrame("Carpetas", true, true, true, true);
         ventanaCarpeta.setSize(800, 600);
         ventanaCarpeta.setLocation(350, 50);
         ventanaCarpeta.setMaximum(true);
         escritorio.add(ventanaCarpeta);
 
-        // Mostrar indicador de carpeta abierta
         indicadorDentro.setVisible(true);
 
-        // Eventos para activar/desactivar subrayado
         ventanaCarpeta.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameActivated(InternalFrameEvent e) {
@@ -236,7 +247,6 @@ public class Escritorio extends JFrame {
             }
         });
 
-        // ---------- CONTENIDO PRINCIPAL ----------
         JPanel contenido = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -245,7 +255,6 @@ public class Escritorio extends JFrame {
         Color c3 = new Color(120, 120, 120);
         Color c4 = new Color(90, 90, 90);
 
-        // -------- FILA 1 - COLUMNA 1 --------
         JPanel fila1col1 = new JPanel();
         fila1col1.setBackground(c1);
         gbc.gridx = 0;
@@ -257,24 +266,16 @@ public class Escritorio extends JFrame {
         gbc.ipady = 40;
         contenido.add(fila1col1, gbc);
 
-        // -------- FILA 1 - COLUMNA 2 --------
-        JPanel fila1col2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        JPanel fila1col2 = new JPanel(new GridBagLayout());
         fila1col2.setBackground(c2);
 
-        // Botones en orden exacto
         JButton btnCambiarNombre = new JButton("Cambiar nombre");
         JButton btnCrear = new JButton("Crear");
         JButton btnCopiar = new JButton("Copiar");
         JButton btnPegar = new JButton("Pegar");
+        JButton btnOrdenar = new JButton("Ordenar *");
+        JTextField txtBuscar = new JTextField(15);
 
-        fila1col2.add(btnCambiarNombre);
-        fila1col2.add(btnCrear);
-        fila1col2.add(btnCopiar);
-        fila1col2.add(btnPegar);
-
-        // Botón Ordenar + Popup
-        JButton btnOrdenar = new JButton("Ordenar ▼");
-        fila1col2.add(btnOrdenar);
         JPopupMenu menuOrdenar = new JPopupMenu();
         menuOrdenar.add(new JMenuItem("Nombre"));
         menuOrdenar.add(new JMenuItem("Fecha"));
@@ -282,20 +283,64 @@ public class Escritorio extends JFrame {
         menuOrdenar.add(new JMenuItem("Tamaño"));
         btnOrdenar.addActionListener(e -> menuOrdenar.show(btnOrdenar, 0, btnOrdenar.getHeight()));
 
-        // Campo de texto Buscar
-        JTextField txtBuscar = new JTextField(15);
-        fila1col2.add(txtBuscar);
+        JButton[] botonesTop = {btnCambiarNombre, btnCrear, btnCopiar, btnPegar, btnOrdenar};
+        Color fondoFijoTop = new Color(180, 180, 180);
+        Color bordeClickTop = Color.WHITE;
+
+        GridBagConstraints gbcTop = new GridBagConstraints();
+        gbcTop.insets = new Insets(5, 5, 5, 5);
+        gbcTop.fill = GridBagConstraints.VERTICAL;
+        gbcTop.anchor = GridBagConstraints.CENTER;
+
+        for (int i = 0; i < botonesTop.length; i++) {
+            JButton b = botonesTop[i];
+            gbcTop.gridx = i;
+            gbcTop.gridy = 0;
+            gbcTop.weightx = 0;
+            gbcTop.weighty = 1;
+
+            b.setPreferredSize(new Dimension(110, 10));
+            b.setMaximumSize(new Dimension(110, 10));
+            b.setMinimumSize(new Dimension(110, 10));
+
+            b.setFocusPainted(false);
+            b.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 2));
+            b.setContentAreaFilled(true);
+            b.setOpaque(true);
+            b.setBackground(fondoFijoTop);
+            b.setHorizontalAlignment(SwingConstants.CENTER);
+
+            b.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent evt) {
+                    b.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent evt) {
+                    b.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 2));
+                }
+            });
+
+            fila1col2.add(b, gbcTop);
+        }
+
+        gbcTop.gridx = botonesTop.length;
+        gbcTop.weightx = 1;
+        gbcTop.anchor = GridBagConstraints.EAST; // alineado a la derecha
+        txtBuscar.setPreferredSize(new Dimension(20, 10));
+        txtBuscar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
+        fila1col2.add(txtBuscar, gbcTop);
 
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 0;
-        gbc.ipady = 40;
+        gbc.ipady = 30;
         gbc.ipadx = 0;
         gbc.fill = GridBagConstraints.BOTH;
         contenido.add(fila1col2, gbc);
 
-        // -------- FILA 2 - COLUMNA 1 (BOTONES VERTICALES) --------
         JPanel fila2col1 = new JPanel();
         fila2col1.setBackground(c3);
         fila2col1.setLayout(new BoxLayout(fila2col1, BoxLayout.Y_AXIS));
@@ -305,12 +350,37 @@ public class Escritorio extends JFrame {
         JButton btnImg = new JButton("Imágenes");
         JButton btnMus = new JButton("Música");
 
+        Color fondoFijo = new Color(200, 200, 200);
+
+        for (JButton b : new JButton[]{btnDoc, btnImg, btnMus}) {
+            b.setFocusPainted(false);
+            b.setBorderPainted(false);
+            b.setContentAreaFilled(true);
+            b.setOpaque(true);
+            b.setBackground(fondoFijo);
+            b.setHorizontalAlignment(SwingConstants.LEFT);
+            b.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+            b.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 2));
+
+            b.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent evt) {
+                    b.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent evt) {
+                    b.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 2));
+                }
+            });
+        }
+
         btnDoc.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnImg.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnMus.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         fila2col1.add(btnDoc);
-        fila2col1.add(Box.createVerticalStrut(10)); // espacio entre botones
+        fila2col1.add(Box.createVerticalStrut(10));
         fila2col1.add(btnImg);
         fila2col1.add(Box.createVerticalStrut(10));
         fila2col1.add(btnMus);
@@ -324,7 +394,6 @@ public class Escritorio extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         contenido.add(fila2col1, gbc);
 
-        // -------- FILA 2 - COLUMNA 2 --------
         JPanel fila2col2 = new JPanel();
         fila2col2.setBackground(c4);
         gbc.gridx = 1;
@@ -332,6 +401,7 @@ public class Escritorio extends JFrame {
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.ipadx = 0;
+        gbc.fill = GridBagConstraints.BOTH;
         contenido.add(fila2col2, gbc);
 
         ventanaCarpeta.setContentPane(contenido);

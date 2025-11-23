@@ -8,10 +8,11 @@ package sistem;
  *
  * @author Cantarero
  */
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Usuario {
-
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L; 
     public static ArrayList<Usuario> usuarios = new ArrayList<>();
     public static final Usuario administrador;
     private String nombre;
@@ -42,5 +43,4 @@ public class Usuario {
     public static boolean hayMasUsuariosQueAdmin() {
         return usuarios.size() > 1;
     }
-    
 }
